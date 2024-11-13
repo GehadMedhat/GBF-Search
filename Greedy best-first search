@@ -1,0 +1,51 @@
+from collections import deque
+
+def greedy_best_first_search(graph, start, goal, heuristic):
+  frontier = deque([(start, heuristic(start, goal))])
+  explored = set()
+  parent = {}
+
+  while frontier:
+    current, _ = frontier.popleft()
+    if current == goal:
+      path = []
+      while current:
+        path.append(current)
+        current = parent[current]
+      path.reverse()
+      return path
+
+    explored.add(current)
+    for neighbor in graph[current]:
+      if neighbor not in explored:
+        frontier.append((neighbor, heuristic(neighbor, goal)))
+        parent[neighbor] = current
+
+  return None
+
+graph = {
+  'A': ['B', 'C'],
+  'B': ['D', 'E'],
+  'C': ['F'],
+  'D': [],
+  'E': ['F'],
+  'F': []
+}
+
+heuristic = {
+  'A': 3,
+  'B': 2,
+  'C': 4,
+  'D': 1,
+  'E': 1,
+  'F': 0
+}
+
+start = 'A'
+goal = 'F'
+
+path = greedy_best_first_search(graph, start, goal, heuristic)
+if path:
+  print("Path found:", path)
+else:
+  print("Path not found.")
